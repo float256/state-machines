@@ -12,7 +12,7 @@ data class Transition(
     }
 
     override fun toString(): String {
-        return "Transition: state=$stateSymbol, outputSymbol=$outputSymbol"
+        return "$stateSymbol|$outputSymbol"
     }
 
     override fun hashCode(): Int {

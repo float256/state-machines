@@ -12,7 +12,7 @@ data class MooreState(
     }
 
     override fun toString(): String {
-        return "MooreState: stateSymbol=$stateSymbol, outputSymbol=$outputSymbol"
+        return "$stateSymbol|$outputSymbol"
     }
 
     override fun hashCode(): Int {
