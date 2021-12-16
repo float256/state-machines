@@ -1,10 +1,14 @@
-import java.util.*
-
 fun validate(expression: String): ValidationResult {
     return try {
         val allSymbols = expression.toList()
-        transitionE(allSymbols.listIterator())
-        ValidationResult.Correct
+        val listIterator = allSymbols.listIterator()
+        transitionE(listIterator)
+
+        return if (listIterator.hasNext()) {
+            ValidationResult.Incorrect
+        } else {
+            ValidationResult.Correct
+        }
     } catch (e: UnsupportedOperationException) {
         ValidationResult.Incorrect
     }
