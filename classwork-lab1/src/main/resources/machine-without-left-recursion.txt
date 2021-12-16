@@ -1,0 +1,16 @@
+# Initial
+E -> E+T|T
+T -> T*F|F
+F -> -F||(E)|7|a
+
+# Without left recursion
+E -> T E'
+T -> F T'
+F -> - F
+    | ( E )
+    | 7
+    | a
+E' -> + T E'
+    | ϵ
+T' -> * F T'
+    | ϵ
