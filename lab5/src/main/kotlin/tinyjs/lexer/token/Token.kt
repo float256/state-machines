@@ -1,7 +1,7 @@
-package tinyjs.lexer
+package tinyjs.lexer.token
 
 data class Token(
-    val type: TokenType,
+    val type: String,
     val startPosition: Int,
     val endPosition: Int
 )
