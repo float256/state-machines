@@ -3,13 +3,13 @@ package regex
 class RegexFactory {
     fun create(expression: String): Regex {
         if (validate(expression)) {
-            return createHelper(expression)
+            return createRegexHelper(expression)
         } else {
             throw RegexException("Incorrect expression")
         }
     }
 
-    private fun createHelper(expression: String): Regex {
+    private fun createRegexHelper(expression: String): Regex {
         val allRegexItems = mutableListOf<Pair<Char?, Regex?>>()
         var currPosition = 0
         while (currPosition < expression.length) {
@@ -31,7 +31,7 @@ class RegexFactory {
                 }
                 currPosition--
 
-                allRegexItems.add(Pair(null, createHelper(subExpression)))
+                allRegexItems.add(Pair(null, createRegexHelper(subExpression)))
             } else {
                 if (expression[currPosition] == RegexConstants.IterationOperationSymbol) {
                     val currItem = Pair(null, Regex(listOf(
