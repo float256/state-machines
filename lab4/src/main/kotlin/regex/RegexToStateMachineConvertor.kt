@@ -5,8 +5,6 @@ import statemachine.StateMachineConstants
 import statemachine.Transition
 import java.util.*
 
-private fun <T> Iterable<T>.replace(predicate: (T) -> T): List<T> = map { predicate(it) }
-
 class RegexToStateMachineConvertor {
     fun convert(regex: Regex): StateMachine {
         val (allStates, allTransitions) = createStatesAndTransitions(regex)
@@ -15,17 +13,17 @@ class RegexToStateMachineConvertor {
     }
 
     private fun createStatesAndTransitions(regex: Regex): Pair<List<String>, Set<Transition>> {
-        val allStates = mutableListOf<String>()
+        val allStates = mutableListOf(UUID.randomUUID().toString())
         val allTransitions = mutableSetOf<Transition>()
 
         var currPosition = 0
         while (currPosition < regex.items.size) {
-            if (isIterationOperation(regex, currPosition)) {
+            currPosition = if (isIterationOperation(regex, currPosition)) {
                 processIteration(regex, currPosition, allStates, allTransitions)
             } else if (isUnionOperation(regex, currPosition)) {
-                currPosition = processUnion(regex, currPosition, allStates, allTransitions)
+                processUnion(regex, currPosition, allStates, allTransitions)
             } else {
-                currPosition = processConcatenation(regex, currPosition, allStates, allTransitions)
+                processConcatenation(regex, currPosition, allStates, allTransitions)
             }
         }
         return Pair(allStates, allTransitions)
@@ -130,6 +128,10 @@ class RegexToStateMachineConvertor {
             statesFromSubRegex.addAll(statesAndTransitionsFromSubRegex.first)
             transitionsFromSubRegex.addAll(statesAndTransitionsFromSubRegex.second)
             replaceState(statesFromSubRegex.first(), allStates.last(), statesFromSubRegex, transitionsFromSubRegex)
+            statesFromSubRegex.removeAt(0)
+
+            allStates.addAll(statesFromSubRegex)
+            allTransitions.addAll(transitionsFromSubRegex)
         }
         return position + 1
     }
@@ -141,7 +143,7 @@ class RegexToStateMachineConvertor {
         allTransitions: MutableSet<Transition>,
     ) {
         allStates[allStates.indexOf(state)] = newState
-        allTransitions.replace { previousTransition ->
+        allTransitions.toList().forEach { previousTransition ->
             val from = if (previousTransition.from == state) {
                 newState
             } else {
@@ -153,7 +155,8 @@ class RegexToStateMachineConvertor {
                 previousTransition.to
             }
 
-            Transition(from, to, previousTransition.symbol)
+            allTransitions.remove(previousTransition)
+            allTransitions.add(Transition(from, to, previousTransition.symbol))
         }
     }
 
@@ -188,7 +191,7 @@ class RegexToStateMachineConvertor {
         allStates: List<String>,
         allTransitions: Set<Transition>,
     ): Pair<List<String>, Set<Transition>> {
-        val renamedStateForInitialStateMap = allStates.mapIndexed { index, initial -> Pair("q$index", initial) }.toMap()
+        val renamedStateForInitialStateMap = allStates.distinct().mapIndexed { index, initial -> Pair(initial, "q$index") }.toMap()
         val renamedStateSet = renamedStateForInitialStateMap.values.toList()
         val renamedTransitionSet = allTransitions.map { initialTransition ->
             Transition(

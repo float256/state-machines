@@ -1,10 +1,17 @@
 package statemachine
 
 class StateMachine(
-    val stateSymbols: Set<String>,
-    val startSymbol: String,
-    val transitionSymbols: Set<String>,
+    stateSymbols: Set<String>,
+    startSymbol: String,
+    transitionSymbols: Set<String>,
 ) {
+    var stateSymbols = stateSymbols
+        private set
+    var startSymbol = startSymbol
+        private set
+    var transitionSymbols = transitionSymbols
+        private set
+
     init {
         if (startSymbol !in stateSymbols) {
             throw IllegalArgumentException("Incorrect start symbol")
