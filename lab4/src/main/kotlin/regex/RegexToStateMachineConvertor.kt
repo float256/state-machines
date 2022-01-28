@@ -105,7 +105,7 @@ class RegexToStateMachineConvertor {
         }
         allStates.add(newFinalState)
 
-        return position + operands.size * 2
+        return position + operands.size * 2 - 1
     }
 
     private fun processConcatenation(

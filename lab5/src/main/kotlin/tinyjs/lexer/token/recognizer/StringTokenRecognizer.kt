@@ -6,14 +6,21 @@ class StringTokenRecognizer: TokenRecognizer {
     override fun recognize(stringForRecognition: String, startPosition: Int): Token? {
         return if (stringForRecognition[startPosition] == '\"') {
             var endPosition = startPosition + 1
-            var isEnd = (endPosition >= stringForRecognition.length)
+            var isStringTokenEndReached = false
 
-            while (!isEnd && isCorrectSymbol(stringForRecognition[endPosition])) {
+            while (
+                (endPosition < stringForRecognition.length) &&
+                !isStringTokenEndReached &&
+                isCorrectSymbol(stringForRecognition[endPosition])
+            ) {
                 endPosition++
-                isEnd = (endPosition >= stringForRecognition.length)
+                isStringTokenEndReached = stringForRecognition[endPosition] == '\"'
+                if (stringForRecognition[endPosition] == '\\') {
+                    endPosition++
+                }
             }
 
-            if (!isEnd && (stringForRecognition[endPosition] == '\"')) {
+            if (!isStringTokenEndReached && (stringForRecognition[endPosition] == '\"')) {
                 Token("STRING", startPosition, endPosition + 1)
             } else {
                 null

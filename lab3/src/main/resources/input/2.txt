@@ -1,0 +1,10 @@
+Q: q0, qf1, qf2
+T: a, b
+q0 -> q0, a
+q0 -> q0, b
+q0 -> qf1, a
+q0 -> qf2, b
+qf1 -> qf1, a
+qf1 -> qf1, b
+qf2 -> qf2, a
+qf2 -> qf2, b

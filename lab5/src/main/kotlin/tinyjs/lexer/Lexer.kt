@@ -32,8 +32,7 @@ class Lexer {
         var newSearchPosition = searchPosition
         while (
             (newSearchPosition < expression.length) &&
-            expression[newSearchPosition].isWhitespace() &&
-            (expression[newSearchPosition] != '\n')
+            expression[newSearchPosition].isWhitespace()
         ) {
             newSearchPosition++
         }

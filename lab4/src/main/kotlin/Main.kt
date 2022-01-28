@@ -6,8 +6,13 @@ fun main() {
     val regexConvertor = RegexToStateMachineConvertor()
     while (true) {
         val regexString = readLine()!!
-        val regex = regexValidator.create(regexString)
-        val stateMachineWithEpsilon = regexConvertor.convert(regex)
-        println(stateMachineWithEpsilon)
+
+        if (regexString != "") {
+            val regex = regexValidator.create(regexString)
+            val stateMachineWithEpsilon = regexConvertor.convert(regex)
+            println(stateMachineWithEpsilon)
+        } else {
+            println("Empty string")
+        }
     }
 }

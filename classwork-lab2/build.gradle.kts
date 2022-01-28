@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.2.0")
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.2.0") //for JVM platform
     testImplementation(kotlin("test"))
 }
 

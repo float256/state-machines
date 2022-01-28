@@ -2,7 +2,7 @@ package statemachine
 
 import java.util.*
 
-class DFAAlgorithm {
+class DFAThompsonAlgorithm {
     fun determinate(initialStateMachine: StateMachine): StateMachine {
         val stateQueue: Queue<Set<String>> = ArrayDeque()
         val groupedStates: MutableSet<Set<String>> = mutableSetOf()
@@ -11,6 +11,7 @@ class DFAAlgorithm {
 
         while (stateQueue.isNotEmpty()) {
             val currStates = stateQueue.poll()
+            groupedStates.add(currStates)
             val statesGroupedByTransitionSymbols = currStates.map { stateSymbol ->
                 initialStateMachine[stateSymbol]!!.getTransitions()
             }

@@ -10,6 +10,10 @@ class RegexFactory {
     }
 
     private fun createRegexHelper(expression: String): Regex {
+        if (expression.trim() == "") {
+            throw RegexException("Expression can't be empty")
+        }
+
         val allRegexItems = mutableListOf<Pair<Char?, Regex?>>()
         var currPosition = 0
         while (currPosition < expression.length) {

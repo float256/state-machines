@@ -1,5 +1,6 @@
 import tinyjs.lexer.Lexer
 import tinyjs.lexer.LexerException
+import tinyjs.lexer.token.recognizer.CommentTokenRecognizer
 import tinyjs.lexer.token.recognizer.IdentifierTokenRecognizer
 import tinyjs.lexer.token.recognizer.NumberTokenRecognizer
 import tinyjs.lexer.token.recognizer.StringTokenRecognizer
@@ -14,21 +15,35 @@ fun main() {
         ImportKeywordRecognizer(),
         ExportKeywordRecognizer(),
         FromKeywordRecognizer(),
+        CommentTokenRecognizer(),
+        IdentifierTokenRecognizer(),
+        StringTokenRecognizer(),
+        NumberTokenRecognizer(),
+
         OpenCurlyBraceRecognizer(),
         ClosedCurlyBraceRecognizer(),
         OpenParenthesisBraceRecognizer(),
         ClosedParenthesisBraceRecognizer(),
+
+        EqualsPlusSighRecognizer(),
+        EqualsMinusSighRecognizer(),
+        EqualsAsteriskSighRecognizer(),
+        EqualsSlashSighRecognizer(),
+        DoubleEqualsSighRecognizer(),
+        EqualsSighRecognizer(),
+        InequalsSighRecognizer(),
+
         PlusSighRecognizer(),
         MinusSighRecognizer(),
         AsteriskSighRecognizer(),
         SlashSighRecognizer(),
-        EqualsSighRecognizer(),
+        ConjunctionOperatorRecognizer(),
+        DisjunctionOperatorRecognizer(),
+        NegationOperatorRecognizer(),
+
         SemicolonSighRecognizer(),
         PointSighRecognizer(),
-        EOLRecognizer(),
-        IdentifierTokenRecognizer(),
-        StringTokenRecognizer(),
-        NumberTokenRecognizer(),
+        CommaSighRecognizer(),
     )
 
     try {

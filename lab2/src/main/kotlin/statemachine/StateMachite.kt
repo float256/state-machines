@@ -3,7 +3,7 @@ package statemachine
 import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Table
 
-abstract class StateMachine<StateType : Any> {
+abstract class StateMachine<StateType : Any> { // PECS
     abstract val stateSymbols: Set<String>
     abstract val inputSymbols: Set<String>
     abstract val outputSymbols: Set<String>

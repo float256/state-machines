@@ -55,9 +55,19 @@ class PlusSighRecognizer: KeywordRecognizer() {
     override val tokenName: String = "PLUS_SIGH"
 }
 
+class EqualsPlusSighRecognizer: KeywordRecognizer() {
+    override val keyword: String = "+="
+    override val tokenName: String = "EQUALS_PLUS_SIGH"
+}
+
 class MinusSighRecognizer: KeywordRecognizer() {
     override val keyword: String = "-"
     override val tokenName: String = "MINUS_SIGH"
+}
+
+class EqualsMinusSighRecognizer: KeywordRecognizer() {
+    override val keyword: String = "-="
+    override val tokenName: String = "EQUALS_MINUS_SIGH"
 }
 
 class AsteriskSighRecognizer: KeywordRecognizer() {
@@ -65,14 +75,34 @@ class AsteriskSighRecognizer: KeywordRecognizer() {
     override val tokenName: String = "ASTERISK_SIGH"
 }
 
+class EqualsAsteriskSighRecognizer: KeywordRecognizer() {
+    override val keyword: String = "*="
+    override val tokenName: String = "EQUALS_ASTERISK_SIGH"
+}
+
 class SlashSighRecognizer: KeywordRecognizer() {
-    override val keyword: String = "="
+    override val keyword: String = "/"
     override val tokenName: String = "SLASH_SIGH"
 }
 
+class EqualsSlashSighRecognizer: KeywordRecognizer() {
+    override val keyword: String = "/="
+    override val tokenName: String = "EQUALS_SLASH_SIGH"
+}
+
 class EqualsSighRecognizer: KeywordRecognizer() {
-    override val keyword: String = "/"
+    override val keyword: String = "="
     override val tokenName: String = "EQUALS_SIGH"
+}
+
+class InequalsSighRecognizer: KeywordRecognizer() {
+    override val keyword: String = "!="
+    override val tokenName: String = "INEQUALITY_SIGH"
+}
+
+class DoubleEqualsSighRecognizer: KeywordRecognizer() {
+    override val keyword: String = "=="
+    override val tokenName: String = "DOUBLE_EQUALS_SIGH"
 }
 
 class SemicolonSighRecognizer: KeywordRecognizer() {
@@ -85,7 +115,22 @@ class PointSighRecognizer: KeywordRecognizer() {
     override val tokenName: String = "POINT"
 }
 
-class EOLRecognizer: KeywordRecognizer() {
-    override val keyword: String = "\n"
-    override val tokenName: String = "EOL"
+class CommaSighRecognizer: KeywordRecognizer() {
+    override val keyword: String = ","
+    override val tokenName: String = "COMMA"
+}
+
+class ConjunctionOperatorRecognizer: KeywordRecognizer() {
+    override val keyword: String = "&&"
+    override val tokenName: String = "CONJUNCTION"
+}
+
+class DisjunctionOperatorRecognizer: KeywordRecognizer() {
+    override val keyword: String = "&&"
+    override val tokenName: String = "DISJUNCTION"
+}
+
+class NegationOperatorRecognizer: KeywordRecognizer() {
+    override val keyword: String = "!"
+    override val tokenName: String = "NEGATION"
 }

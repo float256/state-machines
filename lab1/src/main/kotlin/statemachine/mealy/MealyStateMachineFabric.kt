@@ -7,7 +7,7 @@ import statemachine.moore.MooreStateMachine
 import java.io.InputStream
 import java.util.*
 
-class MealyStateMachineFabric : StateMachineFabric {
+class MealyStateMachineFabric : StateMachineFabric { // Factory
     override fun create(inputStream: InputStream): StateMachine<out Any> {
         val scanner = Scanner(inputStream)
         val allStates = scanner.nextLine().split(":")[1]
