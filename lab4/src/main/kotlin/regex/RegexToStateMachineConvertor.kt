@@ -1,6 +1,7 @@
 package regex
 
 import statemachine.StateMachine
+import statemachine.StateMachineConstants
 import statemachine.Transition
 import java.util.*
 
@@ -20,16 +21,12 @@ class RegexToStateMachineConvertor {
         var currPosition = 0
         while (currPosition < regex.items.size) {
             if (isIterationOperation(regex, currPosition)) {
-                val operand = regex.items[currPosition]
                 processIteration(regex, currPosition, allStates, allTransitions)
             } else if (isUnionOperation(regex, currPosition)) {
-                val operands = getUnionOperands(regex, currPosition)
-                processUnion(regex, currPosition, allStates, allTransitions)
+                currPosition = processUnion(regex, currPosition, allStates, allTransitions)
             } else {
-                processConcatenation(regex, currPosition, allStates, allTransitions)
+                currPosition = processConcatenation(regex, currPosition, allStates, allTransitions)
             }
-
-            currPosition++
         }
         return Pair(allStates, allTransitions)
     }
@@ -39,15 +36,40 @@ class RegexToStateMachineConvertor {
         position: Int,
         allStates: MutableList<String>,
         allTransitions: MutableSet<Transition>,
-    ) {
+    ): Int {
         val currItem = regex.items[position]
-        val currState = allStates[position]
         if (currItem.first != null) {
-            allTransitions.add(Transition(currState, currState, currItem.first!!.toString()))
-        } else if (currItem.second != null) {
-            val (allStatesFromSubRegex, allTransitionsFromSubRegex) = createStatesAndTransitions(regex)
+            val firstState = UUID.randomUUID().toString()
+            val secondState = UUID.randomUUID().toString()
+            val newFinalState = UUID.randomUUID().toString()
+            val prevFinalState = allStates.last()
 
+            allStates.add(firstState)
+            allStates.add(secondState)
+            allStates.add(newFinalState)
+
+            allTransitions.add(Transition(firstState, secondState, currItem.first!!.toString()))
+            allTransitions.add(Transition(secondState, firstState, StateMachineConstants.EmptyTransitionSymbol))
+            allTransitions.add(Transition(prevFinalState, firstState, StateMachineConstants.EmptyTransitionSymbol))
+            allTransitions.add(Transition(secondState, newFinalState, StateMachineConstants.EmptyTransitionSymbol))
+            allTransitions.add(Transition(prevFinalState, newFinalState, StateMachineConstants.EmptyTransitionSymbol))
+        } else if (currItem.second != null) {
+            val (allStatesFromSubRegex, allTransitionsFromSubRegex) = createStatesAndTransitions(currItem.second!!)
+            val newFinalState = UUID.randomUUID().toString()
+            val prevFinalState = allStates.last()
+            val subRegexStartState = allStatesFromSubRegex.first()
+            val subRegexEndState = allStatesFromSubRegex.last()
+
+            allStates.addAll(allStatesFromSubRegex)
+            allStates.add(newFinalState)
+
+            allTransitions.addAll(allTransitionsFromSubRegex)
+            allTransitions.add(Transition(prevFinalState, newFinalState, StateMachineConstants.EmptyTransitionSymbol))
+            allTransitions.add(Transition(prevFinalState, subRegexStartState, StateMachineConstants.EmptyTransitionSymbol))
+            allTransitions.add(Transition(subRegexEndState, subRegexStartState, StateMachineConstants.EmptyTransitionSymbol))
+            allTransitions.add(Transition(subRegexEndState, newFinalState, StateMachineConstants.EmptyTransitionSymbol))
         }
+        return position + 2
     }
 
     private fun processUnion(
@@ -55,8 +77,37 @@ class RegexToStateMachineConvertor {
         position: Int,
         allStates: MutableList<String>,
         allTransitions: MutableSet<Transition>,
-    ) {
+    ): Int {
+        val operands = getUnionOperands(regex, position)
+        val newFinalState = UUID.randomUUID().toString()
+        val prevFinalState = allStates.last()
 
+        operands.forEach { (symbol, subRegex) ->
+            if (symbol != null) {
+                val firstState = UUID.randomUUID().toString()
+                val secondState = UUID.randomUUID().toString()
+
+                allStates.add(firstState)
+                allStates.add(secondState)
+
+                allTransitions.add(Transition(firstState, secondState, symbol.toString()))
+                allTransitions.add(Transition(prevFinalState, firstState, StateMachineConstants.EmptyTransitionSymbol))
+                allTransitions.add(Transition(secondState, newFinalState, StateMachineConstants.EmptyTransitionSymbol))
+            } else if (subRegex != null) {
+                val (allStatesFromSubRegex, allTransitionsFromSubRegex) = createStatesAndTransitions(subRegex)
+                val subRegexStartState = allStatesFromSubRegex.first()
+                val subRegexFinalState = allStatesFromSubRegex.last()
+
+                allStates.addAll(allStatesFromSubRegex)
+                allTransitions.addAll(allTransitionsFromSubRegex)
+
+                allTransitions.add(Transition(prevFinalState, subRegexStartState, StateMachineConstants.EmptyTransitionSymbol))
+                allTransitions.add(Transition(subRegexFinalState, newFinalState, StateMachineConstants.EmptyTransitionSymbol))
+            }
+        }
+        allStates.add(newFinalState)
+
+        return position + operands.size * 2
     }
 
     private fun processConcatenation(
@@ -64,7 +115,7 @@ class RegexToStateMachineConvertor {
         position: Int,
         allStates: MutableList<String>,
         allTransitions: MutableSet<Transition>,
-    ) {
+    ): Int {
         if (regex.items[position].first != null) {
             val transitionSymbol = regex.items[position].first!!.toString()
             val newState = UUID.randomUUID().toString()
@@ -80,6 +131,7 @@ class RegexToStateMachineConvertor {
             transitionsFromSubRegex.addAll(statesAndTransitionsFromSubRegex.second)
             replaceState(statesFromSubRegex.first(), allStates.last(), statesFromSubRegex, transitionsFromSubRegex)
         }
+        return position + 1
     }
 
     private fun replaceState(
