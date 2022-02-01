@@ -7,7 +7,20 @@ class StateMachineEpsilonRemover {
         val epsilonClosureForEachState = stateMachine.stateSymbols.map { stateSymbol ->
             Pair(stateSymbol, getEpsilonClosure(stateMachine, stateSymbol))
         }.toMap()
-        TODO("Not implemented")
+        val allTransitions = stateMachine.stateSymbols.map { stateSymbol ->
+            stateMachine.transitionSymbols.map { transitionSymbol ->
+                getTransitions(stateSymbol, transitionSymbol, epsilonClosureForEachState[stateSymbol]!!)
+            }.flatten()
+        }.flatten().toSet()
+        val allStates = allTransitions.map { listOf(it.from, it.to) }.flatten().toSet()
+
+        val stateMachineWithoutEpsilonTransitions = StateMachine(
+            allStates, stateMachine.startSymbol, stateMachine.transitionSymbols
+        )
+        allTransitions.forEach { transition ->
+            stateMachineWithoutEpsilonTransitions.setTransition(transition.from, transition.to, transition.symbol)
+        }
+        return stateMachineWithoutEpsilonTransitions
     }
 
     private fun getEpsilonClosure(stateMachine: StateMachine, stateSymbol: String): Set<State> {
@@ -18,7 +31,7 @@ class StateMachineEpsilonRemover {
             val currState = statesStack.pop()
             result.add(currState)
 
-            currState.getTransitions().forEach{ transition ->
+            currState.getTransitions().forEach { transition ->
                 if (transition.symbol == StateMachineConstants.EmptyTransitionSymbol) {
                     statesStack.add(stateMachine[transition.to]!!)
                 }
@@ -27,10 +40,16 @@ class StateMachineEpsilonRemover {
         return result
     }
 
-    private fun getTransitions(stateMachine: StateMachine,
-                               stateSymbol: String,
-                               transitionSymbol: String,
-                               epsilonClosure: Set<State>): Set<Transition> {
-        TODO("Not implemented")
+    private fun getTransitions(
+        stateSymbol: String,
+        transitionSymbol: String,
+        epsilonClosureForState: Set<State>
+    ): Set<Transition> {
+        return epsilonClosureForState.map { state ->
+            state.getTransitions().filter { it.symbol == transitionSymbol }
+                .map { transitionForStateFromEpsilonClosure ->
+                    Transition(stateSymbol, transitionForStateFromEpsilonClosure.to, transitionSymbol)
+                }
+        }.flatten().toSet()
     }
 }

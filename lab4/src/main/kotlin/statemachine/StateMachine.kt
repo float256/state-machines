@@ -41,3 +41,26 @@ class StateMachine(
                 allStates.map { (_, state) -> state.toString() }.joinToString("\n")
     }
 }
+
+fun recreateStateMachineWithDefaultNames(stateMachine: StateMachine): StateMachine {
+    val allTransitions = stateMachine.stateSymbols.map {
+        stateMachine[it]!!.getTransitions()
+    }.flatten().toSet()
+
+    val renamedStateForInitialStateMap = stateMachine.stateSymbols
+        .mapIndexed { index, initial -> Pair(initial, "q$index") }.toMap()
+    val renamedStateMachine = StateMachine(
+        renamedStateForInitialStateMap.values.toSet(),
+        stateMachine.startSymbol,
+        stateMachine.transitionSymbols
+    )
+
+    allTransitions.forEach { initialTransition ->
+        renamedStateMachine.setTransition(
+            renamedStateForInitialStateMap[initialTransition.from]!!,
+            renamedStateForInitialStateMap[initialTransition.to]!!,
+            initialTransition.symbol
+        )
+    }
+    return renamedStateMachine
+}

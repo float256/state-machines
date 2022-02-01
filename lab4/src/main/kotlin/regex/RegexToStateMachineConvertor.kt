@@ -8,8 +8,7 @@ import java.util.*
 class RegexToStateMachineConvertor {
     fun convert(regex: Regex): StateMachine {
         val (allStates, allTransitions) = createStatesAndTransitions(regex)
-        val (renamedStates, renamedTransitions) = createReadableNamesForStates(allStates, allTransitions)
-        return createStateMachine(renamedStates, renamedTransitions)
+        return createStateMachine(allStates, allTransitions)
     }
 
     private fun createStatesAndTransitions(regex: Regex): Pair<List<String>, Set<Transition>> {
@@ -185,22 +184,6 @@ class RegexToStateMachineConvertor {
             currPosition++
         }
         return operands
-    }
-
-    private fun createReadableNamesForStates(
-        allStates: List<String>,
-        allTransitions: Set<Transition>,
-    ): Pair<List<String>, Set<Transition>> {
-        val renamedStateForInitialStateMap = allStates.distinct().mapIndexed { index, initial -> Pair(initial, "q$index") }.toMap()
-        val renamedStateSet = renamedStateForInitialStateMap.values.toList()
-        val renamedTransitionSet = allTransitions.map { initialTransition ->
-            Transition(
-                renamedStateForInitialStateMap[initialTransition.from]!!,
-                renamedStateForInitialStateMap[initialTransition.to]!!,
-                initialTransition.symbol
-            )
-        }.toSet()
-        return Pair(renamedStateSet, renamedTransitionSet)
     }
 
     private fun createStateMachine(
